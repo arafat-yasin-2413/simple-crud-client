@@ -45,11 +45,18 @@ const Users = ({usersPromise}) => {
         fetch(`http://localhost:3000/users/${id}`, {
 
             method: 'DELETE',
-            
+
         })
         .then(res=>res.json())
         .then(data => {
-            console.log('after delete : ', data);
+
+            if(data.deletedCount) {
+                const remainingUsers = users.filter(user=> user._id !== id);
+                setUsers(remainingUsers);
+                console.log('after delete : ', data);
+            }
+
+
         })
     }
 
@@ -59,6 +66,7 @@ const Users = ({usersPromise}) => {
 
 			<div>
 				{/* add user form */}
+                <h4>Total Users : {users.length}</h4>
 				<form onSubmit={handleAddUser}>
                     <input type="text" placeholder="your name" name="name" id="" /> <br />
                     <input type="email" placeholder="your email" name="email" id="" /> <br /> 
@@ -70,8 +78,8 @@ const Users = ({usersPromise}) => {
             {/* showing users */}
             <div>
                 {
-                    users.map(user=> 
-                        <p key={user._id}>
+                    users.map((user,index)=> 
+                        <p key={index}>
                             {user.name} : 
                             {user.email}
                             <button onClick={ ()=>{  handleUserDelete(user._id)}}>X</button>
